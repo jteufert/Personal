@@ -71,8 +71,8 @@ config = {
 
     # -- Wall properties ----------------------------------------------------
     "emissivity":  0.85,     # Oxidised stainless steel / Inconel outer surface
-    "T_wall_max": 1500.0,    # Allowable wall temperature [K]
-    #   Inconel 625: ~1200 K | Carbon-Carbon: ~2200 K | Rhenium: ~2700 K
+    "T_wall_max": 1644.0,    # Allowable wall temperature [K]  (1371 °C / 1500 °F)
+    #   Inconel 625: ~1644 K (1500 °F) | Carbon-Carbon: ~2200 K | Rhenium: ~2700 K
 
     # -- Environment --------------------------------------------------------
     "T_background": 4.0,     # Deep-space radiation sink [K]

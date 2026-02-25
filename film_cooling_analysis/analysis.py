@@ -91,7 +91,7 @@ class ThrusterAnalysis:
             "Cp_film":        2570.0,
             "T_film_in":      300.0,
             "emissivity":     0.85,
-            "T_wall_max":     1500.0,
+            "T_wall_max":     1644.0,    # 1371 °C / 1500 °F
             "T_background":   4.0,
         }
         self.cfg.update(config)
