@@ -48,10 +48,13 @@ config = {
     "fuel_name": "Ethanol",  # Ethanol (C2H5OH)
 
     # -- Operating conditions -----------------------------------------------
-    "Pc":     10.0,    # Chamber pressure [bar]
-    "MR":      1.4,    # O/F mixture ratio (mass)
+    "Pc":  130 / 14.5038,  # Chamber pressure [bar]  (130 psi)
+    "MR":   1.4,           # O/F mixture ratio (mass)
     #   Stoichiometric O/F for Ethanol ≈ 2.09; run fuel-rich for cooling
-    "thrust": 20.0,    # Target vacuum thrust [N]
+
+    # -- Nozzle sizing: set D_throat to fix geometry (thrust becomes output)
+    #    or remove D_throat and set thrust [N] to size the throat instead.
+    "D_throat": 0.004,     # Throat diameter [m]  (4 mm)
 
     # -- Nozzle geometry ----------------------------------------------------
     "eps":           50.0,   # Exit-to-throat area ratio Ae/At
@@ -63,7 +66,7 @@ config = {
     "n_points":      500,    # Axial analysis stations
 
     # -- Film cooling -------------------------------------------------------
-    "film_fraction": 0.10,   # Film flow / total fuel flow (10%)
+    "film_fraction": 0.20,   # Film flow / total fuel flow (20%)
     #   Film coolant is ethanol vapour injected at the start of the convergent
     #   section along the inner wall.
     "Cp_film":      2570.0,  # Ethanol vapour Cp ≈ 2570 J/(kg·K) at ~400 K

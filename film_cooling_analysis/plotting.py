@@ -67,10 +67,10 @@ def plot_results(
     fig.suptitle(
         f"Film Cooling Analysis – {config.get('ox_name','GOX')} / "
         f"{config.get('fuel_name','Ethanol')}\n"
-        f"Pc = {config['Pc']:.1f} bar | O/F = {config['MR']:.2f} | "
+        f"Pc = {config['Pc']*14.5038:.0f} psi | O/F = {config['MR']:.2f} | "
         f"ε = {config['eps']:.0f} | "
         f"Film = {config['film_fraction']*100:.0f}% fuel | "
-        f"F = {config['thrust']:.0f} N",
+        f"F = {results['thrust_N']:.1f} N",
         fontsize=11, y=0.98,
     )
 

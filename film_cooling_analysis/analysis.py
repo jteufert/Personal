@@ -74,11 +74,14 @@ class ThrusterAnalysis:
 
     def __init__(self, config: dict):
         self.cfg = {
-            # Defaults for a small 20 N GOX/Ethanol thruster
+            # Defaults for a small GOX/Ethanol thruster
             "ox_name":        "GOX",
             "fuel_name":      "Ethanol",
             "Pc":             10.0,
             "MR":             1.4,
+            # Sizing: set D_throat [m] to fix geometry; or set thrust [N]
+            # to size the throat from performance. D_throat takes priority.
+            "D_throat":       None,
             "thrust":         20.0,
             "eps":            50.0,
             "Dc_Dt":          3.0,
@@ -132,14 +135,21 @@ class ThrusterAnalysis:
         self.cea_props = all_props
 
         # --- Step 2: Nozzle sizing ---------------------------------------
-        # m_dot_total from thrust & Isp; throat area from continuity
-        g0 = 9.80665
-        m_dot_total = mass_flow_from_thrust(cfg["thrust"], ch["Isp"], g0)
-        Pc_Pa = cfg["Pc"] * 1e5  # bar -> Pa
+        g0    = 9.80665
+        Pc_Pa = cfg["Pc"] * 1e5   # bar -> Pa
 
-        # Throat area: m_dot = Pc * At / c*  (from continuity + c* definition)
-        A_throat = m_dot_total * ch["c_star"] / Pc_Pa
-        D_throat = 2.0 * np.sqrt(A_throat / np.pi)
+        if cfg.get("D_throat") is not None:
+            # Fixed hardware: throat diameter given, thrust is an output
+            D_throat = float(cfg["D_throat"])
+            A_throat = np.pi * (D_throat / 2.0) ** 2
+            m_dot_total = Pc_Pa * A_throat / ch["c_star"]
+            thrust_N = m_dot_total * ch["Isp"] * g0
+        else:
+            # Design to thrust target: size the throat
+            m_dot_total = mass_flow_from_thrust(cfg["thrust"], ch["Isp"], g0)
+            A_throat    = m_dot_total * ch["c_star"] / Pc_Pa
+            D_throat    = 2.0 * np.sqrt(A_throat / np.pi)
+            thrust_N    = cfg["thrust"]
 
         nozzle = NozzleGeometry(
             D_throat      = D_throat,
@@ -231,7 +241,8 @@ class ThrusterAnalysis:
             "m_dot_core":  flows["m_dot_core"],
             "m_dot_ox":    flows["m_dot_ox"],
             "m_dot_fuel":  flows["m_dot_fuel"],
-            # CEA
+            # Performance
+            "thrust_N":    thrust_N,
             "Isp":         ch["Isp"],
             "c_star":      ch["c_star"],
             "T_c":         ch["T_c"],
@@ -250,10 +261,12 @@ class ThrusterAnalysis:
         print(f"\n{'='*65}")
         print(f"  Film Cooling Analysis: {cfg['ox_name']} / {cfg['fuel_name']}")
         print(f"{'='*65}")
+        Pc_psi = cfg["Pc"] * 14.5038
+        thrust_label = ("computed" if cfg.get("D_throat") else "target")
         print(f"  Operating Conditions")
-        print(f"    Chamber pressure  : {cfg['Pc']:.2f} bar")
+        print(f"    Chamber pressure  : {cfg['Pc']:.3f} bar  ({Pc_psi:.1f} psi)")
         print(f"    Mixture ratio O/F : {cfg['MR']:.3f}")
-        print(f"    Target thrust     : {cfg['thrust']:.1f} N (vacuum)")
+        print(f"    Thrust ({thrust_label:8s}) : {r['thrust_N']:.2f} N (vacuum)")
         print(f"    Specific impulse  : {r['Isp']:.1f} s")
         print(f"    Chamber temp.     : {r['T_c']:.0f} K")
         print(f"    Char. velocity c* : {r['c_star']:.1f} m/s")
