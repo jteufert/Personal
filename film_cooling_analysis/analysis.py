@@ -185,8 +185,8 @@ class ThrusterAnalysis:
         flows = split_mass_flows(m_dot_total, cfg["MR"], cfg["film_fraction"])
         m_dot_film = flows["m_dot_film"]
 
-        # Film injection at the start of the convergent section
-        x_injection = -nozzle.L_conv
+        # Film injection at the injector plane (chamber head)
+        x_injection = -(nozzle.L_conv + nozzle.L_chamber)
 
         # --- Step 5: Film cooling ----------------------------------------
         film = energy_balance_film(
