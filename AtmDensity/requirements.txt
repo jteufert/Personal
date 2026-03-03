@@ -1,0 +1,8 @@
+# Python dependencies for NRLMSISE-00 atmospheric density calculations
+# Install with:  pip install -r requirements.txt
+
+# Primary package — wraps the NRLMSISE-00 Fortran/C code:
+msise00>=1.3.0
+
+# Optional alternative (different interface, same model):
+# nrlmsise00>=0.0.7
